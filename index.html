@@ -28,7 +28,31 @@
       overflow:hidden;
     }
 
-    .logo{height:34px;padding-left:8px;}
+    .logo{
+      height:34px;
+      padding-left:8px;
+      z-index:2;
+    }
+
+    /* MOVING TEXT FIXED */
+    .marquee-wrapper{
+      position:absolute;
+      width:100%;
+      overflow:hidden;
+      z-index:1;
+    }
+
+    .marquee-text{
+      white-space:nowrap;
+      display:inline-block;
+      animation:move 12s linear infinite;
+      margin-left:120px;
+    }
+
+    @keyframes move{
+      0%{transform:translateX(100%);}
+      100%{transform:translateX(-100%);}
+    }
 
     .admin-icon{
       position:absolute;
@@ -42,9 +66,10 @@
       justify-content:center;
       align-items:center;
       cursor:pointer;
+      z-index:5;
     }
 
-    /* CATEGORY BAR */
+    /* CATEGORY */
     .category-bar{
       position:fixed;
       top:45px;
@@ -63,9 +88,7 @@
       cursor:pointer;
     }
 
-    .category-btn.active{
-      background:#25D366;
-    }
+    .category-btn.active{background:#25D366;}
 
     .view{display:none;padding:10px;}
     .active-view{display:block;}
@@ -77,6 +100,20 @@
       padding:10px;
       margin-bottom:15px;
       box-shadow:0 2px 10px rgba(0,0,0,0.08);
+      position:relative;
+    }
+
+    /* NEW BADGE FIXED */
+    .new-badge{
+      position:absolute;
+      top:12px;
+      left:12px;
+      background:red;
+      color:white;
+      font-size:11px;
+      padding:4px 6px;
+      border-radius:5px;
+      z-index:2;
     }
 
     /* CAROUSEL */
@@ -95,9 +132,6 @@
       flex-shrink:0;
     }
 
-    .carousel::-webkit-scrollbar{display:none;}
-
-    /* DOTS */
     .dots{
       text-align:center;
       margin-top:5px;
@@ -114,7 +148,6 @@
 
     .dot.active{background:#000;}
 
-    /* PRICE */
     .price{
       background:#111;
       color:white;
@@ -125,7 +158,6 @@
       font-weight:bold;
     }
 
-    /* BUTTON */
     .buy-btn{
       background:#25D366;
       color:white;
@@ -171,6 +203,26 @@
       font-weight:bold;
     }
 
+    /* ADMIN ITEM */
+    .admin-item{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      background:#f2f2f2;
+      padding:8px;
+      border-radius:6px;
+      margin:5px 0;
+    }
+
+    .delete-btn{
+      background:red;
+      color:white;
+      border:none;
+      padding:6px 10px;
+      border-radius:6px;
+      cursor:pointer;
+    }
+
   </style>
 </head>
 
@@ -179,19 +231,21 @@
 <!-- HEADER -->
 <div class="top-marquee">
   <img src="logo.jpeg" class="logo">
+
+  <div class="marquee-wrapper">
+    <div class="marquee-text">
+      ✨ BOB TEXTILE ✨ Premium Fashion Store ✨ Quality Fabrics ✨ Affordable Luxury ✨
+    </div>
+  </div>
+
   <div class="admin-icon" onclick="openAdmin()">🔒</div>
 </div>
 
-<!-- CATEGORY HEADER -->
+<!-- CATEGORY -->
 <div class="category-bar">
-  <div class="category-btn" onclick="showView('about',this)">ABOUT US</div>
+  <div class="category-btn" onclick="showView('about',this)">ABOUT</div>
   <div class="category-btn" onclick="showView('kaftan',this)">KAFTAN</div>
   <div class="category-btn" onclick="showView('lace',this)">LACE</div>
-  <div class="category-btn" onclick="showView('bags',this)">BAGS</div>
-  <div class="category-btn" onclick="showView('shoes',this)">SHOES</div>
-  <div class="category-btn" onclick="showView('abayas',this)">ABAYAS</div>
-  <div class="category-btn" onclick="showView('yard',this)">YARD</div>
-  <div class="category-btn" onclick="showView('caps',this)">CAPS</div>
 </div>
 
 <!-- VIEWS -->
@@ -201,16 +255,9 @@
 
 <div id="kaftanView" class="view"></div>
 <div id="laceView" class="view"></div>
-<div id="bagsView" class="view"></div>
-<div id="shoesView" class="view"></div>
-<div id="abayasView" class="view"></div>
-<div id="yardView" class="view"></div>
-<div id="capsView" class="view"></div>
 
 <!-- ADMIN -->
 <div class="admin" id="adminPanel">
-
-  <h3>Admin Panel</h3>
 
   <input id="aName" placeholder="Product Name">
   <input id="aPrice" placeholder="Price">
@@ -218,11 +265,6 @@
   <select id="aCategory">
     <option value="kaftan">Kaftan</option>
     <option value="lace">Lace</option>
-    <option value="bags">Bags</option>
-    <option value="shoes">Shoes</option>
-    <option value="abayas">Abayas</option>
-    <option value="yard">Yard</option>
-    <option value="caps">Caps</option>
   </select>
 
   <button class="btn" onclick="uploadImage()">Upload Images</button>
@@ -235,10 +277,9 @@
 let products = JSON.parse(localStorage.getItem("products")) || [];
 let uploadedImages = [];
 
-/* VIEW SWITCH */
+/* VIEW */
 function showView(type,el){
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active-view"));
-  document.querySelectorAll(".category-btn").forEach(b=>b.classList.remove("active"));
   el.classList.add("active");
 
   if(type==="about"){
@@ -253,6 +294,8 @@ function showView(type,el){
   list.forEach((p,index)=>{
     html+=`
     <div class="card">
+
+      ${ (Date.now()-p.date < 86400000) ? '<div class="new-badge">NEW</div>' : '' }
 
       <div class="carousel car${index}">
         ${p.images.map(img=>`<img src="${img}">`).join('')}
@@ -278,7 +321,7 @@ function showView(type,el){
   });
 }
 
-/* CAROUSEL DOTS */
+/* CAROUSEL */
 function setupCarousel(car,dots){
   const c=document.querySelector(car);
   const box=document.querySelector(dots);
@@ -304,8 +347,7 @@ function setupCarousel(car,dots){
 
 /* WHATSAPP */
 function buyNow(price,img){
-  let msg=`Hello, I want to order:\n₦${price}\n${img}`;
-  window.open("https://wa.me/2349114738932?text="+encodeURIComponent(msg));
+  window.open("https://wa.me/2349114738932?text="+encodeURIComponent("Order ₦"+price));
 }
 
 /* CLOUDINARY */
@@ -321,7 +363,7 @@ function uploadImage(){
   });
 }
 
-/* SAVE PRODUCT */
+/* SAVE */
 function addProduct(){
   products.unshift({
     name:aName.value,
@@ -333,14 +375,35 @@ function addProduct(){
 
   localStorage.setItem("products",JSON.stringify(products));
   uploadedImages=[];
-  alert("Product saved!");
 }
 
 /* ADMIN */
 function openAdmin(){
   if(prompt("Password")==="1234"){
     adminPanel.style.display="block";
+    loadAdmin();
   }
+}
+
+/* DELETE FIX */
+function loadAdmin(){
+  let html="";
+  products.forEach((p,i)=>{
+    html+=`
+    <div class="admin-item">
+      <img src="${p.images[0]}" width="50">
+      <div style="flex:1">₦${p.price}</div>
+      <button class="delete-btn" onclick="deleteProduct(${i})">Delete</button>
+    </div>`;
+  });
+
+  adminPanel.innerHTML += html;
+}
+
+function deleteProduct(i){
+  products.splice(i,1);
+  localStorage.setItem("products",JSON.stringify(products));
+  location.reload();
 }
 
 </script>
