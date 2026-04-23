@@ -39,9 +39,11 @@
   .carousel img{
     min-width:100%;
     height:220px;
-    object-fit:cover;
+    object-fit:contain;   /* ✅ FULL IMAGE FIX */
+    background:#fff;
     scroll-snap-align:center;
     flex-shrink:0;
+    display:block;
   }
 
   .carousel::-webkit-scrollbar{
@@ -138,9 +140,6 @@
   <div class="carousel car2">
     <img src="kaftan.jpg">
     <img src="kaftan.jpg">
-    <img src="kaftan.jpg">
-    <img src="kaftan.jpg">
-    <img src="kaftan.jpg">
   </div>
 
   <div class="dots dots2"></div>
@@ -160,7 +159,8 @@
 </div>
 
 <script>
-// FUNCTION TO CREATE DOTS + CAROUSEL TRACKING
+
+// SETUP CAROUSEL DOTS
 function setupCarousel(carouselClass, dotsClass){
 
   const carousel = document.querySelector(carouselClass);
@@ -194,6 +194,7 @@ function order(name, price){
   const msg = `Hello, I want to order:%0A%0AProduct: ${name}%0APrice: ₦${price}`;
   window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
 }
+
 </script>
 
 </body>
