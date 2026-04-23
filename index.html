@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Product Card Carousel with Dots</title>
+<title>Kaftan Product Card</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -16,7 +16,6 @@
     height:100vh;
   }
 
-  /* CARD */
   .card{
     width:320px;
     background:#fff;
@@ -31,7 +30,6 @@
     overflow-x:auto;
     scroll-snap-type:x mandatory;
     -webkit-overflow-scrolling:touch;
-    scroll-behavior:smooth;
   }
 
   .carousel img{
@@ -64,11 +62,10 @@
   }
 
   .dot.active{
-    background:#333;
+    background:#000;
     transform:scale(1.2);
   }
 
-  /* CONTENT */
   .content{
     padding:12px;
     text-align:center;
@@ -109,12 +106,12 @@
 
 <div class="card">
 
-  <!-- CAROUSEL -->
+  <!-- CAROUSEL (USING LOCAL IMAGE kaftan.jpg) -->
   <div class="carousel" id="carousel">
-    <img src="https://via.placeholder.com/400x300/ff7f7f">
-    <img src="https://via.placeholder.com/400x300/87ceeb">
-    <img src="https://via.placeholder.com/400x300/ffa500">
-    <img src="https://via.placeholder.com/400x300/9acd32">
+    <img src="kaftan.jpg">
+    <img src="kaftan.jpg">
+    <img src="kaftan.jpg">
+    <img src="kaftan.jpg">
   </div>
 
   <!-- DOTS -->
@@ -156,7 +153,7 @@ carousel.addEventListener("scroll", () => {
   if(dots[index]) dots[index].classList.add("active");
 });
 
-// WHATSAPP ORDER
+// ORDER BUTTON
 function order(){
   const phone = "2348012345678";
   const msg = "Hello, I want to order Luxury Kaftan (₦15,000)";
