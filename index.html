@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Kaftan Product Card</title>
+<title>Product Cards</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -10,10 +10,14 @@
     margin:0;
     font-family:Arial;
     background:#f5f5f5;
+    padding:20px;
+  }
+
+  .container{
     display:flex;
-    justify-content:center;
+    flex-direction:column;
+    gap:20px;
     align-items:center;
-    height:100vh;
   }
 
   .card{
@@ -38,7 +42,6 @@
     object-fit:cover;
     scroll-snap-align:center;
     flex-shrink:0;
-    display:block;
   }
 
   .carousel::-webkit-scrollbar{
@@ -104,25 +107,24 @@
 
 <body>
 
+<div class="container">
+
+<!-- CARD 1 -->
 <div class="card">
 
-  <!-- CAROUSEL (USING LOCAL IMAGE kaftan.jpg) -->
-  <div class="carousel" id="carousel">
-    <img src="kaftan.jpg">
+  <div class="carousel car1">
     <img src="kaftan.jpg">
     <img src="kaftan.jpg">
     <img src="kaftan.jpg">
   </div>
 
-  <!-- DOTS -->
-  <div class="dots" id="dots"></div>
+  <div class="dots dots1"></div>
 
-  <!-- CONTENT -->
   <div class="content">
     <h3>Luxury Kaftan</h3>
     <div class="price">₦ 15,000</div>
 
-    <button class="btn" onclick="order()">
+    <button class="btn" onclick="order('Luxury Kaftan','15000')">
       <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png">
       WhatsApp Order
     </button>
@@ -130,33 +132,66 @@
 
 </div>
 
+<!-- CARD 2 -->
+<div class="card">
+
+  <div class="carousel car2">
+    <img src="kaftan.jpg">
+    <img src="kaftan.jpg">
+    <img src="kaftan.jpg">
+    <img src="kaftan.jpg">
+    <img src="kaftan.jpg">
+  </div>
+
+  <div class="dots dots2"></div>
+
+  <div class="content">
+    <h3>Royal Agbada</h3>
+    <div class="price">₦ 20,000</div>
+
+    <button class="btn" onclick="order('Royal Agbada','20000')">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png">
+      WhatsApp Order
+    </button>
+  </div>
+
+</div>
+
+</div>
+
 <script>
-const carousel = document.getElementById("carousel");
-const images = carousel.querySelectorAll("img");
-const dotsContainer = document.getElementById("dots");
+// FUNCTION TO CREATE DOTS + CAROUSEL TRACKING
+function setupCarousel(carouselClass, dotsClass){
 
-// CREATE DOTS
-images.forEach((_, i) => {
-  const dot = document.createElement("span");
-  dot.classList.add("dot");
-  if(i === 0) dot.classList.add("active");
-  dotsContainer.appendChild(dot);
-});
+  const carousel = document.querySelector(carouselClass);
+  const images = carousel.querySelectorAll("img");
+  const dotsContainer = document.querySelector(dotsClass);
 
-const dots = document.querySelectorAll(".dot");
+  images.forEach((_, i) => {
+    const dot = document.createElement("span");
+    dot.classList.add("dot");
+    if(i === 0) dot.classList.add("active");
+    dotsContainer.appendChild(dot);
+  });
 
-// UPDATE DOTS ON SCROLL
-carousel.addEventListener("scroll", () => {
-  const index = Math.round(carousel.scrollLeft / carousel.clientWidth);
+  const dots = dotsContainer.querySelectorAll(".dot");
 
-  dots.forEach(dot => dot.classList.remove("active"));
-  if(dots[index]) dots[index].classList.add("active");
-});
+  carousel.addEventListener("scroll", () => {
+    const index = Math.round(carousel.scrollLeft / carousel.clientWidth);
 
-// ORDER BUTTON
-function order(){
+    dots.forEach(dot => dot.classList.remove("active"));
+    if(dots[index]) dots[index].classList.add("active");
+  });
+}
+
+// INIT BOTH CARDS
+setupCarousel(".car1", ".dots1");
+setupCarousel(".car2", ".dots2");
+
+// WHATSAPP ORDER
+function order(name, price){
   const phone = "2348012345678";
-  const msg = "Hello, I want to order Luxury Kaftan (₦15,000)";
+  const msg = `Hello, I want to order:%0A%0AProduct: ${name}%0APrice: ₦${price}`;
   window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
 }
 </script>
