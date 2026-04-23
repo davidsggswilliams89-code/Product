@@ -14,7 +14,7 @@
       padding-top:80px;
     }
 
-    /* HEADER FIX (z-index layering) */
+    /* HEADER */
     .top-marquee{
       background:#111;
       color:white;
@@ -28,7 +28,6 @@
       z-index:3000;
     }
 
-    /* LOGO ABOVE TEXT */
     .logo{
       height:34px;
       padding-left:8px;
@@ -37,7 +36,6 @@
       background:#111;
     }
 
-    /* MOVING TEXT BEHIND LOGO + ADMIN */
     .marquee-wrapper{
       position:absolute;
       width:100%;
@@ -50,7 +48,6 @@
       display:inline-block;
       animation:move 12s linear infinite;
       margin-left:120px;
-      opacity:0.95;
     }
 
     @keyframes move{
@@ -73,7 +70,7 @@
       z-index:4;
     }
 
-    /* CATEGORY BAR */
+    /* CATEGORY */
     .category-bar{
       position:fixed;
       top:45px;
@@ -92,13 +89,10 @@
       white-space:nowrap;
       cursor:pointer;
       border-radius:20px;
-      transition:0.2s;
     }
 
-    /* ROUND ACTIVE BUTTON */
     .category-btn.active{
       background:#25D366;
-      border-radius:20px;
     }
 
     .view{display:none;padding:10px;}
@@ -114,12 +108,7 @@
       position:relative;
     }
 
-    /* IMAGE WRAP FOR BADGE FIX */
-    .img-wrap{
-      position:relative;
-    }
-
-    /* NEW BADGE FIXED TOP LEFT OF IMAGE */
+    /* NEW BADGE */
     .new-badge{
       position:absolute;
       top:8px;
@@ -132,11 +121,12 @@
       z-index:5;
     }
 
-    /* CAROUSEL */
+    /* CAROUSEL (MANUAL ONLY) */
     .carousel{
       display:flex;
       overflow-x:auto;
       scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;
     }
 
     .carousel img{
@@ -150,7 +140,7 @@
 
     .carousel::-webkit-scrollbar{display:none;}
 
-    /* DOTS RESTORED */
+    /* DOTS */
     .dots{
       text-align:center;
       margin-top:5px;
@@ -178,7 +168,7 @@
       font-weight:bold;
     }
 
-    /* BUY BUTTON (UPDATED) */
+    /* BUY BUTTON */
     .buy-btn{
       background:#25D366;
       color:white;
@@ -278,8 +268,6 @@
   <div class="category-btn" onclick="showView('bags',this)">BAGS</div>
   <div class="category-btn" onclick="showView('shoes',this)">SHOES</div>
   <div class="category-btn" onclick="showView('abayas',this)">ABAYAS</div>
-  <div class="category-btn" onclick="showView('yard',this)">YARD</div>
-  <div class="category-btn" onclick="showView('caps',this)">CAPS</div>
 </div>
 
 <!-- VIEWS -->
@@ -292,8 +280,6 @@
 <div id="bagsView" class="view"></div>
 <div id="shoesView" class="view"></div>
 <div id="abayasView" class="view"></div>
-<div id="yardView" class="view"></div>
-<div id="capsView" class="view"></div>
 
 <!-- ADMIN -->
 <div class="admin" id="adminPanel">
@@ -309,12 +295,25 @@
     <option value="bags">Bags</option>
     <option value="shoes">Shoes</option>
     <option value="abayas">Abayas</option>
-    <option value="yard">Yard</option>
-    <option value="caps">Caps</option>
   </select>
 
   <button class="btn" onclick="uploadImage()">Upload Images</button>
   <button class="btn" onclick="addProduct()">Save Product</button>
+
+  <hr>
+
+  <h3>Delete Products</h3>
+
+  <select id="delCategory" onchange="loadDeleteList()">
+    <option value="">Select Category</option>
+    <option value="kaftan">Kaftan</option>
+    <option value="lace">Lace</option>
+    <option value="bags">Bags</option>
+    <option value="shoes">Shoes</option>
+    <option value="abayas">Abayas</option>
+  </select>
+
+  <div id="deleteList"></div>
 
 </div>
 
@@ -342,12 +341,10 @@ function showView(type,el){
     html+=`
     <div class="card">
 
-      <div class="img-wrap">
-        ${ (Date.now()-p.date < 86400000) ? '<div class="new-badge">NEW</div>' : '' }
+      ${ (Date.now()-p.date < 86400000) ? '<div class="new-badge">NEW</div>' : '' }
 
-        <div class="carousel car${index}">
-          ${p.images.map(img=>`<img src="${img}">`).join('')}
-        </div>
+      <div class="carousel car${index}">
+        ${p.images.map(img=>`<img src="${img}">`).join('')}
       </div>
 
       <div class="dots dots${index}"></div>
@@ -371,7 +368,7 @@ function showView(type,el){
   });
 }
 
-/* CAROUSEL + AUTO */
+/* MANUAL CAROUSEL ONLY */
 function setupCarousel(car,dots){
   const c=document.querySelector(car);
   const box=document.querySelector(dots);
@@ -388,21 +385,12 @@ function setupCarousel(car,dots){
   });
 
   const dot=box.querySelectorAll(".dot");
-  let index=0;
 
-  setInterval(()=>{
-    index++;
-    if(index>=imgs.length) index=0;
-
-    c.scrollTo({
-      left:index*c.clientWidth,
-      behavior:"smooth"
-    });
-
+  c.addEventListener("scroll",()=>{
+    let i=Math.round(c.scrollLeft/c.clientWidth);
     dot.forEach(x=>x.classList.remove("active"));
-    if(dot[index]) dot[index].classList.add("active");
-
-  },4000);
+    if(dot[i]) dot[i].classList.add("active");
+  });
 }
 
 /* WHATSAPP */
@@ -443,6 +431,38 @@ function openAdmin(){
   if(prompt("Password")==="1234"){
     adminPanel.style.display="block";
   }
+}
+
+/* DELETE SYSTEM WITH CATEGORY FILTER */
+function loadDeleteList(){
+  let cat=document.getElementById("delCategory").value;
+
+  let list=products.filter(p=>p.category===cat);
+
+  let html="";
+
+  list.forEach((p,i)=>{
+    html+=`
+    <div class="admin-item">
+      <img src="${p.images[0]}" width="50">
+      <div style="flex:1">₦${p.price}</div>
+      <button class="delete-btn" onclick="deleteProduct('${cat}',${i})">Delete</button>
+    </div>`;
+  });
+
+  deleteList.innerHTML=html;
+}
+
+function deleteProduct(cat,index){
+  let filtered=products.filter(p=>p.category===cat);
+
+  let item=filtered[index];
+
+  products=products.filter(p=>p!==item);
+
+  localStorage.setItem("products",JSON.stringify(products));
+
+  loadDeleteList();
 }
 
 </script>
